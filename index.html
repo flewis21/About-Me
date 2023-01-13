@@ -36,6 +36,7 @@
         style="display: block; padding: 1em 0; text-align: center"
         ><img
           alt=""
+          id="profilePic"
           border="0"
           width="300"
           data-original-height="1892"
@@ -60,5 +61,8 @@
         ></iframe></div
     ></a>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      document.getElementById("profilePic").onclick = location.reload();
+    </script>
   </body>
 </html>
