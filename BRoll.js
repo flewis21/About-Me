@@ -25,7 +25,7 @@ function datasetFormatting() {
 function dateAgenda() {
   console.log(boilerplate.busyDates());
 }
-var doGet = function (e) {
+var tempCode = function (e) {
   const Route = {};
   Route.path = function (route, callback) {
     Route[route] = callback;
@@ -34,11 +34,58 @@ var doGet = function (e) {
   return Route["default"](e);
 };
 
+var doGet = function (e) {
+  var foobarr = e.parameter["func"] || "renderFile";
+  var libName = "boilerplate";
+  var libFunc = foobarr;
+  var rndPage = [
+    `index proMedia epaWebsite callBack oddChances jsGame checkOnDay uiAccess popUpOpen congressLeg congressMembers jFundamentals gnuFree myGNUFreeJS`,
+  ]
+    .toString()
+    .split(" ")[
+    Math.floor(
+      Math.random() *
+        Math.floor(
+          [
+            `index proMedia epaWebsite callBack oddChances jsGame checkOnDay uiAccess popUpOpen congressLeg congressMembers jFundamentals gnuFree myGNUFreeJS`,
+          ]
+            .toString()
+            .split(" ").length,
+        ),
+    )
+  ];
+  args = e.parameter["args"] || ["jFundamentals"];
+  return renderTemplate(
+    this[libName].contentApp(`<?!= appL ?>`, {
+      appL: this[libName][
+        foobarr ||
+          HtmlService.createHtmlOutput(
+            `
+              <script>
+                document.getElementById("appList").value
+              </script>
+              `,
+          ).getContent()
+      ].apply(this, [
+        args ||
+          HtmlService.createHtmlOutput(
+            `
+              <script>
+                document.getElementById("username").value
+              </script>
+              `,
+          ).getContent(),
+      ]),
+    }),
+    { e: e },
+  );
+};
+
 function endPoint(end, return_type) {
   var pathEnd = DistanceProject.GOOGLEMAPS(
     "4510 Split Creek Dr, Douglasville, Ga, 30135",
     end,
-    return_type
+    return_type,
   );
   return pathEnd;
 }
@@ -100,7 +147,7 @@ function postFromSpreadsheet() {
     10,
     0,
     0,
-    "https://discord.com/api/webhooks/866899396082532352/BsC_e7SnvWvCiEfwUMrkKtmifwmMxskS1noSPTkw77bKpK3p7j8VXbNcwyDdU3Ji6p9A"
+    "https://discord.com/api/webhooks/866899396082532352/BsC_e7SnvWvCiEfwUMrkKtmifwmMxskS1noSPTkw77bKpK3p7j8VXbNcwyDdU3Ji6p9A",
   );
 }
 
@@ -121,6 +168,20 @@ var runAll = function (func, args) {
 
   args = args || [];
 
+  return this[libName][libFunc].apply(this, args);
+};
+
+var runBoilerplate = function (func, args) {
+  var libName = "boilerplate";
+  var libFunc = func || "doGet";
+  args = args || [];
+  return this[libName][libFunc].apply(this, args);
+};
+
+var runDistanceProject = function (func, args) {
+  var libName = "DistanceProject";
+  var libFunc = func || "GOOGLEMAPS";
+  args = args || ["Houston, Tx", "Brooklyn, NY", "miles"];
   return this[libName][libFunc].apply(this, args);
 };
 
@@ -261,7 +322,7 @@ function startPoint(start, return_type) {
   var pathStart = DistanceProject.GOOGLEMAPS(
     start,
     "4510 Split Creek Dr, Douglasville, Ga, 30135",
-    return_type
+    return_type,
   );
   return pathStart;
 }
