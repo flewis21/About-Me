@@ -27,9 +27,9 @@ var renderTemplate = function (blob, argsObject) {
     });
   }
   var funcCheck = appList();
-  var schedule = foo.dateTime(new Date());
+  var schedule = boilerplate.dateTime(new Date());
   // var research = geneFrame(seoSheet(coUtility()[0].rndTitle).url)
-  var html = foo.contentApp(
+  var html = boilerplate.contentApp(
     `
   <html id="renderTemplate">
     <head>
@@ -397,7 +397,6 @@ var renderTemplate = function (blob, argsObject) {
   );
   return tmp
     .evaluate()
-    .append(funcCheck)
     .append(html)
     .append(schedule)
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
@@ -416,13 +415,13 @@ var appList = function (e) {
       <link href="https://fonts.googleapis.com/css?family=Acme" rel="stylesheet">
     </head>
     <body>
-    <? var appList = foo.appSort(9) ?>
+    <? var appList = boilerplate.appSort(9) ?>
     <? var dropList = appList.map((item) => {
         return "<option>" + item + "</option>"
 
     }).join("") ?>
     <? var result = JSON.stringify(dropList) ?>
-    <? var appUrl = foo.getUrl(ScriptApp) + "?func=" ?>
+    <? var appUrl = boilerplate.getUrl(ScriptApp) + "?func=" ?>
     <nav>
       <div class="row">
         <div class="col s10 card-panel l12 m12 push-s1">
@@ -431,7 +430,7 @@ var appList = function (e) {
               <div class="black" id="seoData">
                 <div class="row">
                   <div class="col s10 l10 m10 card-panel push-s1 push-l1 push-m1">
-                    <div class="container row valign-wrapper"><?!= foo.rule() ?></div>
+                    <div class="container row valign-wrapper"><?!= boilerplate.rule() ?></div>
                       <div id="indexDiv" class="video-container grey flow-text" style="clear: both;overflow-y: auto;overflow-x: hidden;text-align: center">
                         <div class="col s10 l10 m10 receipt black darken-1">
                           <iframe 
