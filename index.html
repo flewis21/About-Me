@@ -1,66 +1,103 @@
 <!doctype html>
-
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="google-signin-scope" content="profile email" />
-    <meta
-      name="google-signin-client_id"
-      content="739921544160-nvqbr8cmqcs35n700q94mn5qnjh7vdr5.apps.googleusercontent.com"
-    />
-    <script src="https://apis.google.com/js/api.js?onload=onApiLoad"></script>
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
-    />
-    <link rel="stylesheet" href="style.css" />
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"
-      integrity="sha512-6+YN/9o9BWrk6wSfGxQGpt3EUK6XeHi6yeHV+TYD2GR0Sj/cggRpXr1BrAQf0as6XslxomMUxXp2vIl+fv0QRA=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <title>Retail Trade Finance and Insurance</title>
+    <base target="_self" />
+    <title>GitHub Pages with Apps Script</title>
   </head>
+  <body>
+    <h1>Data from Apps Script:</h1>
+    <div id="data-display">Loading...</div>
 
-  <body class="black">
-    <div class="separator responsive-image" style="clear: both">
-      <nav class="blue">
-        <a
-          href="https://flewis21.github.io/About-Me/"
-          style="display: block; padding: 1em 0; text-align: center"
-          ><img
-            alt=""
-            id="profilePic"
-            border="0"
-            width="300"
-            data-original-height="1892"
-            data-original-width="2359"
-            src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjJfO_vNE2d5bvp82yEIC1u_OgwS28bvakKeNEpWX0a2iKn-UE6nO4XuXJIHTWeQuBfUV8k9dPo4aj_r3wHTl6Wkau66dO4jNSaUWyffEifjrha77jYoxTEgKvB7nLGxKs3TWdzTuMBcBSZCkdrN4M4CP9cGdFFf-3TkAR1nM7oQw5tlo3_drrb11Hq/s400/Snapchat-1098841028.jpg"
-        /></a>
-      </nav>
-    </div>
-    <div class="output"></div>
-    <div class="separator video-container wrap-element" style="clear: both">
-      <iframe
-        class="wrapped-iframe"
-        src="https://script.google.com/macros/s/AKfycbxTu7GwOomQ4H97GFSCYfujxWdumQJxT3EkYcrS1fpOr_UFTc-K4BELWHKHC-jVSSx0/exec?func=crmGWI"
-        title="description"
-        width="100%"
-        height="100%"
-        allow="autoplay"
-        allow="encrypted-media"
-        title="Dontime Life Website"
-        frameborder="0"
-        allowfullscreen
-      ></iframe>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <h2>Contact Form</h2>
+    <form id="myForm">
+      <label for="name">Name:</label><br />
+      <input type="text" id="name" name="name" /><br />
+      <label for="email">Email:</label><br />
+      <input type="email" id="email" name="email" /><br /><br />
+      <button type="button" onclick="submitForm()">Submit</button>
+      <div id="form-message"></div>
+    </form>
+
+    <script>
+      const scriptURL =
+        "https://script.google.com/macros/s/AKfycbxTu7GwOomQ4H97GFSCYfujxWdumQJxT3EkYcrS1fpOr_UFTc-K4BELWHKHC-jVSSx0/exec?func=crmGWI";
+
+      async function fetchData() {
+        try {
+          const response = await fetch(scriptURL + "?action=getData");
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(
+              `HTTP error! status: ${response.status}, ${errorText}`,
+            );
+          }
+
+          let responseData;
+          const contentType = response.headers.get("content-type");
+
+          if (contentType && contentType.includes("application/json")) {
+            responseData = await response.json();
+          } else if (contentType && contentType.includes("text/plain")) {
+            responseData = await response.text();
+          } else {
+            responseData = await response.text();
+          }
+          document.getElementById("data-display").textContent = JSON.stringify(
+            responseData,
+            null,
+            2,
+          );
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          document.getElementById("data-display").textContent =
+            "Error fetching data: " + error.message;
+        }
+      }
+
+      async function submitForm() {
+        const form = document.getElementById("myForm");
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => (data[key] = value));
+        if (!data.name) {
+          document.getElementById("form-message").textContent =
+            "Error: Name is required";
+          return;
+        }
+        if (!data.email) {
+          document.getElementById("form-message").textContent =
+            "Error: Email is required";
+          return;
+        }
+
+        try {
+          const response = await fetch(scriptURL + "?action=submitForm", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP error ${response.status}: ${errorText}`);
+          }
+          const responseData = await response.json();
+          document.getElementById("form-message").textContent =
+            responseData.message;
+
+          if (responseData.success) {
+            form.reset();
+          }
+        } catch (error) {
+          console.error("Error submitting form:", error);
+          document.getElementById("form-message").textContent =
+            `Error: ${error.message}`;
+        }
+      }
+
+      fetchData(); // Call on page load
+    </script>
   </body>
 </html>
