@@ -1,3 +1,42 @@
+const functionRegistry = {
+  fileList: [],
+  paramsList: [],
+  initialize: function () {
+    for (const key in globalThis) {
+      if (typeof globalThis[key] === "function") {
+        this.fileList.push(key);
+        try {
+          const funcString = globalThis[key].toString();
+          const params = funcString
+            .substring(funcString.indexOf("(") + 1, funcString.indexOf(")"))
+            .split(",")
+            .map((param) => param.trim())
+            .filter((param) => param !== "");
+          this.paramsList.push({ name: key, parameters: params });
+        } catch (e) {
+          Logger.log(`Error processing function: ${key}. Error: ${e}`);
+          this.paramsList.push({
+            name: key,
+            parameters: ["(Unable to parse)"],
+          });
+        }
+      }
+    }
+  },
+  getFileList: function () {
+    return this.fileList;
+  },
+  getParamsList: function () {
+    return this.paramsList;
+  },
+  maxTime: 6 * 60 * 1000,
+  get time() {
+    return Math.floor(
+      (this.maxTime - (new Date().getTime() % (1000 * 60))) / 1000,
+    );
+  },
+};
+
 var renderFile = function (file, argsObject) {
   if (file) {
     const tmp = HtmlService.createTemplateFromFile(file);
