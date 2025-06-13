@@ -35,8 +35,69 @@ var tempCode = function (e) {
 };
 
 var doGet = function (e) {
-  var foobarr = e.parameter["func"] || "renderFile";
   var libName = "boilerplate";
+  // Early return for getData action
+  if (e && e.parameter && e.parameter.action === "getData") {
+    return this[libName].handleRequest(e);
+  }
+
+  // Determine funcTres
+  var funcTres = e && e.parameter["file"] ? e.parameter["file"] : "uiAccess";
+
+  // Logging
+  if (e && e.parameter["func"]) {
+    console.log(JSON.stringify(e));
+  } else {
+    var argsEd = this[libName].testlt();
+    if (typeof this[libName].mis === "function") {
+      var misArgs;
+      if (typeof argsEd === "string") {
+        misArgs = [argsEd];
+      } else if (typeof argsEd === "object" && argsEd !== null && argsEd.name) {
+        misArgs =
+          argsEd.parameters && argsEd.parameters.length > 0
+            ? [argsEd.name, ...argsEd.parameters]
+            : [argsEd.name];
+      } else {
+        console.log("Unexpected argsEd type: ", argsEd);
+        misArgs = ["Invalid Entry"];
+      }
+
+      e = this[libName].objectOfS(
+        ["parameter"],
+        [
+          [
+            ["func", "mis"],
+            ["args", misArgs],
+            ["action", "getData"],
+          ],
+        ],
+        functionRegistry.time,
+      );
+      console.log(JSON.stringify(e));
+    }
+  }
+
+  // Logging
+  console.log(
+    functionRegistry.time +
+      "\n" +
+      arguments.callee.name +
+      "\ne is !" +
+      !e +
+      ", = " +
+      JSON.stringify(e),
+  );
+  var funcUno = e.parameter["func"];
+  // ? console.log(e.parameter["func"] + " funcUno  = " + typeof funcUno)
+  // : console.error(e.parameter["func"] + " funcUno  = " + typeof funcUno);
+  console.log("e.parameter['args'] before funcDos:", e.parameter["args"]);
+  var funcDos = e.parameter["args"];
+  // ? console.log(e.parameter["args"] + " funcDos  = " + typeof funcDos)
+  // : console.error(e.parameter["args"] + " funcDos  = " + typeof funcDos);
+  console.log("e.parameter['args'] after funcDos:", e.parameter["args"]);
+  console.log("funcDos:", funcDos);
+  var foobarr = funcUno || "renderFile";
   var libFunc = foobarr;
   var rndPage = [
     `index proMedia epaWebsite callBack oddChances jsGame checkOnDay uiAccess popUpOpen congressLeg congressMembers jFundamentals gnuFree myGNUFreeJS`,
@@ -85,12 +146,92 @@ var doGet = function (e) {
                     <?!= renBlob ?>
                   </div>
                 </body>
-                  <script> 
-                    document.addEventListener("DOMContentLoaded", eRun)
-                    function eRun() {
-                        document.getElementById("pageObj").innerHTML = <?!= JSON.stringify(e) ?>
-                      } 
-                  </script>
+                <script>
+                  function serverSide(func, args) {
+                    return new Promise((resolve, reject) => {
+                      google.script.run
+                        .withSuccessHandler((result) => {
+                          resolve(result); // result will be { type: "...", data: "..." }
+                          // You would then process 'result' here to update specific parts of your current page
+                          // For example, update a div with result.data if result.type is "text" or "html"
+                          console.log("Server side call success:", result);
+                        })
+                        .withFailureHandler((error) => {
+                          reject(error);
+                          console.error("Server-side call error:", error);
+                          alert("Error during server call: " + error.message);
+                        })
+                        .runBoilerplate(func, args);
+                    });
+                  }
+                  const currentE = JSON.parse(<?= e ?>);
+                  const homePageUrl = <?= homePage ?>;
+
+                  console.log("Client-side: Initial doGet event object:", currentE);
+                  console.log("Client-side: Home Page URL:", homePageUrl);
+
+                  console.log("line 261");
+                  document.addEventListener("DOMContentLoaded", eRun);
+                  function eRun() {
+                    console.log("line 258");
+                    var objUrl = document.getElementById("pageObj");
+                    console.log("line 259");
+                    var objDiv = document.getElementById("eObject");
+                    console.log("line 260");
+                    let initialArgs = currentE.parameter["args"];
+                    if (initialArgs !== undefined && initialArgs !== null) {
+                      if (typeof initialArgs === 'object') {
+                        objUrl.value = JSON.stringify(initialArgs, null, 2);
+                      } else {
+                        objUrl.value = initialArgs; // If it's a string directly
+                      }
+                    } else {
+                      objUrl.value = '[""]'; // Default if args is missing
+                    }
+                    objUrl.addEventListener("change", function () {
+                      try {
+                        // Parse the user's input as the new 'args' value
+                        // Allow direct strings or JSON arrays/objects
+                        let parsedE;
+                        try {
+                          parsedE = JSON.parse(this.value);
+                        } catch (jsonError) {
+                          // If it's not valid JSON, treat it as a plain string
+                          parsedE = this.value;
+                        }
+
+                        // --- MODIFICATION STARTS HERE ---
+                        // Create a *new*, reduced e object containing only func and args
+                        const updatedClientE = {
+                          parameter: {
+                            func: currentE.parameter.func, // Keep the original func
+                            args: parsedE                 // Use the new parsed args
+                          }
+                        };
+                        // --- MODIFICATION ENDS HERE ---
+
+                        alert("e.parameter['args'] updated. Sending back to server for re-render.");
+                        console.log("Client-side: Updated e object to send:", updatedClientE);
+                        async function handlePageUpdate() {
+                          try {
+                            const newHtmlContent = await serverSide("reRenderPageWithNewE", [updatedClientE]);
+                            document.open();
+                            document.write(newHtmlContent);
+                            document.close();
+                            console.log("Client-side: Page re-rendered with new content from server.");
+                          } catch (error) {
+                            console.error("Client-side Error during full re-render:", error);
+                            alert("Error re-rendering: " + error.message);
+                          }
+                        }
+                        handlePageUpdate();
+                      } catch (error) {
+                        alert("Error processing input. Please ensure it's valid JSON or a plain string.");
+                        console.error("Input processing error:", error);
+                      }
+                    });
+                  }
+                </script>
               </html>`,
     {
       renBlob: this[libName].contentApp(
@@ -118,12 +259,12 @@ var doGet = function (e) {
                     }
                 </style
               </head>
-              <body>
-                <div id="coApp">
+              <body class="z-depth-5 content-section responsive-section black center">
+                <div id="coApp" class="container">
                   <?!= appL ?>
                 </div>
                 <div class="row">
-                  <div class="col s7 l7 m7 card-panel push-m2 push-s2 push-l2">
+                  <div class="col s8 l8 m8 z-depth-5 card-panel push-m2 push-s2 push-l2">
                     <div class="video-container"> 
                         <iframe 
                           src=""
@@ -194,6 +335,7 @@ var doGet = function (e) {
         },
       ),
       e: JSON.stringify(e),
+      homePage: this[libName].getScriptUrl(),
     },
   );
 };
@@ -288,12 +430,104 @@ var runAll = function (func, args) {
   return this[libName][libFunc].apply(this, args);
 };
 
-var runBoilerplate = function (func, args) {
-  var libName = "boilerplate";
-  var libFunc = func || "doGet";
-  args = args || [];
-  return this[libName][libFunc].apply(this, args);
-};
+// var runBoilerplate = function (func, args) {
+//   var libName = "boilerplate";
+//   var libFunc = func || "doGet";
+//   args = args || [];
+//   return this[libName][libFunc].apply(this, args);
+// };
+
+function runBoilerplate(func, args) {
+  var libName = "foo";
+  // Check if maxTime exists as a global variable
+  const timeRemaining =
+    typeof functionRegistry.maxTime !== "undefined" &&
+    functionRegistry.maxTime instanceof Date
+      ? Math.floor(
+          (functionRegistry.maxTime.getTime() -
+            (new Date().getTime() % (1000 * 60))) /
+            1000,
+        ) // Use .getTime() for Date objects
+      : "N/A"; // Provide a fallback if maxTime is not defined or not a Date
+
+  console.log(
+    `Time remaining: ${timeRemaining}` +
+      `\nFunction: ${arguments.callee.name}` +
+      `\nfunc: ${func}, args: ${JSON.stringify(args)}`,
+  );
+  try {
+    // If 'foo' is still where your functions like 'mis' are, keep this line.
+    // However, if your functions like 'mis' are also global (e.g., globalThis.mis),
+    // then you might just call them directly or use `this[func]` if `this` refers to the global scope.
+    // Based on the logs, 'mis' and 'yahooSort' seem to be global functions.
+    let rawResult;
+    if (typeof this[libName][func] === "function") {
+      rawResult = this[libName][func].apply(this, args); // Call the global function
+    } else {
+      // Fallback or error if func is not found in globalThis
+      throw new Error(
+        `Function '${this[libName][func]}' not found in global scope.`,
+      );
+    }
+
+    // ... (rest of your processing logic for rawResult)
+    if (
+      rawResult &&
+      typeof rawResult.getContent === "function" &&
+      typeof rawResult.setXFrameOptionsMode === "function"
+    ) {
+      return { type: "html", data: rawResult.getContent() };
+    } else if (
+      rawResult &&
+      typeof rawResult.getResponseCode === "function" &&
+      typeof rawResult.getContentText === "function"
+    ) {
+      const contentType = rawResult.getHeaders()["Content-Type"] || "";
+      const responseText = rawResult.getContentText();
+      if (contentType.includes("application/json")) {
+        try {
+          return { type: "jsonData", data: JSON.parse(responseText) };
+        } catch (e) {
+          return {
+            type: "text",
+            data: `Error parsing JSON from URL fetch: ${responseText}`,
+          };
+        }
+      } else if (contentType.includes("text/html")) {
+        return { type: "html", data: responseText };
+      } else {
+        return { type: "text", data: responseText };
+      }
+    } else if (typeof rawResult === "string") {
+      try {
+        const parsedJson = JSON.parse(rawResult);
+        return { type: "jsonData", data: parsedJson };
+      } catch (jsonError) {
+        if (
+          rawResult.trim().startsWith("<") &&
+          rawResult.trim().endsWith(">")
+        ) {
+          return { type: "html", data: rawResult };
+        } else {
+          return { type: "text", data: rawResult };
+        }
+      }
+    } else if (typeof rawResult === "object" && rawResult !== null) {
+      if (rawResult.html) {
+        return { type: "html", data: rawResult.html };
+      }
+      if (rawResult.url) {
+        return { type: "url", data: rawResult.url };
+      }
+      return { type: "object", data: rawResult };
+    } else {
+      return { type: "unknown", data: rawResult };
+    }
+  } catch (error) {
+    Logger.log("Error in " + func + ": " + error.message);
+    throw new Error(`Server error in ${func}: ${error.message}`);
+  }
+}
 
 var runDistanceProject = function (func, args) {
   var libName = "DistanceProject";
