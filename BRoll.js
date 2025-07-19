@@ -176,6 +176,74 @@ var doGet = function (e) {
                           padding: 15px;
                         }
                       }
+                      h1 {
+                        font-size: 2.5em;
+                        color: #333;
+                        margin-bottom: 20px;
+                        text-align: center;
+                      }
+                      form label {
+                        font-size: 1em;
+                        color: #555;
+                        margin-bottom: 5px;
+                        display: block;
+                      }
+                      form input[type="text"],
+                      form input[type="date"],
+                      form input[type="number"] {
+                        width: 100%;
+                        padding: 10px;
+                        margin-bottom: 15px;
+                        border: 1px solid #ddd;
+                        border-radius: 5px;
+                        font-size: 1em;
+                      }
+                      form button[type="submit"] {
+                        background-color: #007bff;
+                        color: white;
+                        padding: 12px 25px;
+                        border: none;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        font-size: 1.1em;
+                        transition: background-color 0.3s ease;
+                        display: block;
+                        margin-top: 20px;
+                      }
+                      form button[type="submit"]:hover {
+                        background-color: #0056b3;
+                      }
+                      @media (max-width: 600px) {
+                        h1 {
+                          font-size: 2em;
+                        }
+                        form label, form input, form button {
+                          font-size: 0.9em;
+                        }
+                      }
+                      .autocomplete-suggestions {
+                          border: 1px solid #ccc;
+                          max-height: 200px;
+                          overflow-y: auto;
+                          background-color: white;
+                          z-index: 100;
+                          position: absolute;
+                          width: 100%;
+                          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                          margin-top: -15px;
+                          left: 0;
+                      }
+                      .autocomplete-suggestions div {
+                          padding: 8px 12px;
+                          cursor: pointer;
+                          border-bottom: 1px solid #eee;
+                      }
+                      .autocomplete-suggestions div:hover {
+                          background-color: #f0f0f0;
+                      }
+                      .autocomplete-suggestions div:last-child {
+                          border-bottom: none;
+                      }
                     </style>
                 </head>
                 <body>
@@ -251,11 +319,25 @@ var doGet = function (e) {
                         console.log("Client-side: Updated e object to send:", updatedClientE);
                         async function handlePageUpdate() {
                           try {
-                            const newHtmlContent = await serverSide("reRenderPageWithNewE", [updatedClientE]);
-                            document.open();
-                            document.write(newHtmlContent);
-                            document.close();
-                            console.log("Client-side: Page re-rendered with new content from server.");
+                            const newHtmlContent = await serverSide(updatedClientE.parameter["func"], updatedClientE.parameter["args"]);
+                            if (newHtmlContent && newHtmlContent.type === "html" && newHtmlContent.data) {
+                              document.open();
+                              document.write(newHtmlContent.data); // Use the data property
+                              document.close();
+                              console.log("Client-side: Page re-rendered with new content from server.");
+                            } 
+                            else if (newHtmlContent && newHtmlContent.type === "object" && newHtmlContent.data) {
+                              document.open();
+                              document.write(newHtmlContent.data.index); // Use the data property
+                              document.close();
+                              console.log("Client-side: Page re-rendered with new content from server.");
+                            } 
+                            else {
+                              document.open();
+                              document.write(newHtmlContent);
+                              document.close();
+                              console.log("Client-side: Page re-rendered with new content from server.");
+                            }
                           } catch (error) {
                             console.error("Client-side Error during full re-render:", error);
                             alert("Error re-rendering: " + error.message);
@@ -315,83 +397,15 @@ var doGet = function (e) {
                       flex-direction: column;
                       min-height: 100vh;
                       padding: 20px;}
-                    h1 {
-                      font-size: 2.5em;
-                      color: #333;
-                      margin-bottom: 20px;
-                      text-align: center;
-                    }
-                    form label {
-                      font-size: 1em;
-                      color: #555;
-                      margin-bottom: 5px;
-                      display: block;
-                    }
-                    form input[type="text"],
-                    form input[type="date"],
-                    form input[type="number"] {
-                      width: 100%;
-                      padding: 10px;
-                      margin-bottom: 15px;
-                      border: 1px solid #ddd;
-                      border-radius: 5px;
-                      font-size: 1em;
-                    }
-                    form button[type="submit"] {
-                      background-color: #007bff;
-                      color: white;
-                      padding: 12px 25px;
-                      border: none;
-                      border-radius: 5px;
-                      cursor: pointer;
-                      font-size: 1.1em;
-                      transition: background-color 0.3s ease;
-                      display: block;
-                      margin-top: 20px;
-                    }
-                    form button[type="submit"]:hover {
-                      background-color: #0056b3;
-                    }
-                    @media (max-width: 600px) {
-                      h1 {
-                        font-size: 2em;
-                      }
-                      form label, form input, form button {
-                        font-size: 0.9em;
-                      }
-                    }
-                    .autocomplete-suggestions {
-                        border: 1px solid #ccc;
-                        max-height: 200px;
-                        overflow-y: auto;
-                        background-color: white;
-                        z-index: 100;
-                        position: absolute;
-                        width: 100%;
-                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                        margin-top: -15px;
-                        left: 0;
-                    }
-                    .autocomplete-suggestions div {
-                        padding: 8px 12px;
-                        cursor: pointer;
-                        border-bottom: 1px solid #eee;
-                    }
-                    .autocomplete-suggestions div:hover {
-                        background-color: #f0f0f0;
-                    }
-                    .autocomplete-suggestions div:last-child {
-                        border-bottom: none;
-                    }
                   </style
               </head>
               <body class="z-depth-5 content-section responsive-section black center">
                 <div id="coApp" class="container">
-                  <?!= appL["index"]["dataStr"] ?>
+                  <?!= appL["index"]? appL["index"]["dataStr"]:appL ?>
                 </div>
                 <div class="row">
-                  <div class="col s10 l10 m10 z-depth-5 card-panel push-m2 push-s2 push-l2">
-                    <div class="container"> 
+                  <div class="col s10 l10 m10 z-depth-5 push-m2 push-s2 push-l2">
+                    <div class="app-container"> 
                         <iframe 
                           src=""
                           id="indexBeta"
@@ -407,10 +421,10 @@ var doGet = function (e) {
                   </div>
                 </div>
                 <script>
-                  console.log(<?!= appL["index"]["url"].length ?>)
-                  if (<?!= appL["index"]["url"].length === 99 ?>) {
+                  console.log(<?!= appL["index"]? appL["index"]["url"].length:appL.length ?>)
+                  if (<?!= appL["index"]? appL["index"]["url"].length === 99:appL.length === 99 ?>) {
                     document.getElementById("coApp").innerHTML = ""
-                    document.getElementById("indexBeta").src = <?= appL["index"]["url"] ?>}
+                    document.getElementById("indexBeta").src = <?= appL["index"]? appL["index"]["url"]:appL ?>}
                   else {document.getElementById("indexBeta").src = "https://www.clubhouse.com/@fabianlewis?utm_medium=ch_profile&utm_campaign=lhTUtHb2bYqPN3w8EEB7FQ-247242"}
                 </script>
               </body>
@@ -467,7 +481,7 @@ var doGet = function (e) {
 };
 
 function endPoint(end, return_type) {
-  var pathEnd = DistanceProject.GOOGLEMAPS(
+  var pathEnd = boilerplate.seoPastTime(
     "4510 Split Creek Dr, Douglasville, Ga, 30135",
     end,
     return_type,
@@ -484,7 +498,7 @@ function jsonXpath(url, params, xpath) {
   return boilerplate.jsonXpath(url, params, xpath);
 }
 function kiloPoint(start, end) {
-  var path = DistanceProject.GOOGLEMAPS(start, end, "kilometers");
+  var path = boilerplate.seoPastTime(start, end, "kilometers");
   return path;
 }
 function lockR(row, col) {
@@ -494,7 +508,7 @@ function lockR(row, col) {
   return lock;
 }
 function milePoint(start, end) {
-  var path = DistanceProject.GOOGLEMAPS(start, end, "miles");
+  var path = boilerplate.seoPastTime(start, end, "miles");
   return path;
 }
 var minutePoint = function (start, end) {
@@ -564,7 +578,7 @@ var runAll = function (func, args) {
 // };
 
 function runBoilerplate(func, args) {
-  var libName = "foo";
+  var libName = "boilerplate";
   // Check if maxTime exists as a global variable
   const timeRemaining =
     typeof functionRegistry.maxTime !== "undefined" &&
@@ -796,7 +810,7 @@ function stampRowInventoryCheck(e) {
   return;
 }
 function startPoint(start, return_type) {
-  var pathStart = DistanceProject.GOOGLEMAPS(
+  var pathStart = boilerplate.seoPastTime(
     start,
     "4510 Split Creek Dr, Douglasville, Ga, 30135",
     return_type,
