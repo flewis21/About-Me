@@ -100,7 +100,7 @@ var doGet = function (e) {
   var foobarr = funcUno || "renderFile";
   var libFunc = foobarr;
   var rndPage = [
-    `index proMedia epaWebsite callBack oddChances jsGame checkOnDay uiAccess popUpOpen congressLeg congressMembers jFundamentals gnuFree myGNUFreeJS`,
+    `untitled proMedia epaWebsite callBack oddChances jsGame checkOnDay uiAccess popUpOpen congressLeg congressMembers jFundamentals gnuFree myGNUFreeJS`,
   ]
     .toString()
     .split(" ")[
@@ -108,14 +108,14 @@ var doGet = function (e) {
       Math.random() *
         Math.floor(
           [
-            `index proMedia epaWebsite callBack oddChances jsGame checkOnDay uiAccess popUpOpen congressLeg congressMembers jFundamentals gnuFree myGNUFreeJS`,
+            `untitled proMedia epaWebsite callBack oddChances jsGame checkOnDay uiAccess popUpOpen congressLeg congressMembers jFundamentals gnuFree myGNUFreeJS`,
           ]
             .toString()
             .split(" ").length,
         ),
     )
   ];
-  args = e.parameter["args"] || ["index"];
+  args = e.parameter["args"] || ["untitled"];
   return renderTemplate(
     `<html id="indexDoGet">
                 <head>
@@ -138,11 +138,49 @@ var doGet = function (e) {
                         align-content: flex-start;
                         overflow: auto;
                       }
-                  </style>
+                      .app-container {
+                        background-color: white;
+                        padding: 30px;
+                        border-radius: 10px;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                        width: 90%;
+                        max-width: 800px;
+                        margin-top: 20px;
+                        margin-bottom: 20px;
+                        position: relative;
+                      }
+                      nav {
+                        width: 100%;
+                        background-color: #4CAF50;
+                        padding: 15px 0;
+                        text-align: center;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                        position: sticky;
+                        top: 0;
+                        z-index: 1000;
+                      }
+                      nav a {
+                        color: white !important;
+                        font-size: 1.2em;
+                        text-decoration: none;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        transition: background-color 0.3s ease;
+                      }
+                      nav a:hover {
+                        background-color: #45a049;
+                      }
+                      @media (max-width: 600px) {
+                        .app-container {
+                          width: 95%;
+                          padding: 15px;
+                        }
+                      }
+                    </style>
                 </head>
                 <body>
-                  <div id="pageObj"></div>
-                  <div>
+                  <div id="eObject"><input type="text" id="pageObj" value=""></div>
+                  <div class="row"><div class="center app-container col s12 l12 m12 z-depth-5 card-panel push-m2 push-s2 push-l2"></div>
                     <?!= renBlob ?>
                   </div>
                 </body>
@@ -154,7 +192,6 @@ var doGet = function (e) {
                           resolve(result); // result will be { type: "...", data: "..." }
                           // You would then process 'result' here to update specific parts of your current page
                           // For example, update a div with result.data if result.type is "text" or "html"
-                          console.log("Server side call success:", result);
                         })
                         .withFailureHandler((error) => {
                           reject(error);
@@ -245,8 +282,15 @@ var doGet = function (e) {
                 <link href="https://fonts.googleapis.com/css?family=Acme" rel="stylesheet">
                 <style>
 
-                    body {
-
+                    a:link, a:visited {color:metallic grey !important;
+                                      font-size: 4.5em;}
+                    a:hover, a:active{ 
+                      color:white  !important;
+                      text-decoration:none  !important;}
+                    html, body {
+                      height: 100%;
+                    }
+                    body: {
                       flex-grow: 1;
                       color:blue;
                       text-decoration:bold;
@@ -256,21 +300,103 @@ var doGet = function (e) {
                       text-align: center;
                       align-content: flex-start;
                       overflow: auto;
+                      color:metallic grey !important;
+                  
+                      font-size: 4.5em;
+                      margin-top: 10px;
+                      flex: 0 0 60px;
+                      justify-content: space-around;
+                      align-items: center;
+                      border: solid .5px;
+                      border-radius: 10px;
+                      margin: 0px 15px 5px 15px;
+                      background-color: #ffc107;
+                      display: flex;
+                      flex-direction: column;
+                      min-height: 100vh;
+                      padding: 20px;}
+                    h1 {
+                      font-size: 2.5em;
+                      color: #333;
+                      margin-bottom: 20px;
+                      text-align: center;
                     }
-                </style
+                    form label {
+                      font-size: 1em;
+                      color: #555;
+                      margin-bottom: 5px;
+                      display: block;
+                    }
+                    form input[type="text"],
+                    form input[type="date"],
+                    form input[type="number"] {
+                      width: 100%;
+                      padding: 10px;
+                      margin-bottom: 15px;
+                      border: 1px solid #ddd;
+                      border-radius: 5px;
+                      font-size: 1em;
+                    }
+                    form button[type="submit"] {
+                      background-color: #007bff;
+                      color: white;
+                      padding: 12px 25px;
+                      border: none;
+                      border-radius: 5px;
+                      cursor: pointer;
+                      font-size: 1.1em;
+                      transition: background-color 0.3s ease;
+                      display: block;
+                      margin-top: 20px;
+                    }
+                    form button[type="submit"]:hover {
+                      background-color: #0056b3;
+                    }
+                    @media (max-width: 600px) {
+                      h1 {
+                        font-size: 2em;
+                      }
+                      form label, form input, form button {
+                        font-size: 0.9em;
+                      }
+                    }
+                    .autocomplete-suggestions {
+                        border: 1px solid #ccc;
+                        max-height: 200px;
+                        overflow-y: auto;
+                        background-color: white;
+                        z-index: 100;
+                        position: absolute;
+                        width: 100%;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                        margin-top: -15px;
+                        left: 0;
+                    }
+                    .autocomplete-suggestions div {
+                        padding: 8px 12px;
+                        cursor: pointer;
+                        border-bottom: 1px solid #eee;
+                    }
+                    .autocomplete-suggestions div:hover {
+                        background-color: #f0f0f0;
+                    }
+                    .autocomplete-suggestions div:last-child {
+                        border-bottom: none;
+                    }
+                  </style
               </head>
               <body class="z-depth-5 content-section responsive-section black center">
                 <div id="coApp" class="container">
-                  <?!= appL ?>
+                  <?!= appL["index"]["dataStr"] ?>
                 </div>
                 <div class="row">
-                  <div class="col s8 l8 m8 z-depth-5 card-panel push-m2 push-s2 push-l2">
-                    <div class="video-container"> 
+                  <div class="col s10 l10 m10 z-depth-5 card-panel push-m2 push-s2 push-l2">
+                    <div class="container"> 
                         <iframe 
                           src=""
                           id="indexBeta"
-                          width="100%"
-                          height="100%"
+                          width='100%'
+                          height='100%'
                           allow="autoplay"
                           allow="encrypted-media"
                           title="Dontime Life Website"
@@ -281,10 +407,10 @@ var doGet = function (e) {
                   </div>
                 </div>
                 <script>
-                  console.log(<?!= appL.length ?>)
-                  if (<?!= appL.length === 99 ?>) {
+                  console.log(<?!= appL["index"]["url"].length ?>)
+                  if (<?!= appL["index"]["url"].length === 99 ?>) {
                     document.getElementById("coApp").innerHTML = ""
-                    document.getElementById("indexBeta").src = <?= appL ?>}
+                    document.getElementById("indexBeta").src = <?= appL["index"]["url"] ?>}
                   else {document.getElementById("indexBeta").src = "https://www.clubhouse.com/@fabianlewis?utm_medium=ch_profile&utm_campaign=lhTUtHb2bYqPN3w8EEB7FQ-247242"}
                 </script>
               </body>

@@ -17,21 +17,15 @@
     ],
     "libraries": [
       {
-        "userSymbol": "DistanceProject",
-        "libraryId": "10a4NETP5LB-1Im1Ad1Ec1s0pvMDMnnVfOMEspeUKyokMXFf7_RFzwHct",
-        "version": "0",
-        "developmentMode": true
-      },
-      {
-        "userSymbol": "boilerplate",
-        "libraryId": "14lqyRBpQArU7wWshDkPEL-5_nUj92IGluvZGPiTLzLoFjQKqc7MJ3sWc",
-        "version": "0",
-        "developmentMode": true
-      },
-      {
         "userSymbol": "MacrosandCustomFunctions",
         "libraryId": "1EcDu8RLqksGN4WjYrXXC-BQhAUe0CafsQffl-A4PoJHc0usEe2TP5Qrt",
         "version": "7"
+      },
+      {
+        "userSymbol": "boilerplate",
+        "libraryId": "1lvHkptRYP7Nw2ljEg-MweelbqvGvd2rRnta79NKuPCqHlTdPuunewT9F",
+        "version": "0",
+        "developmentMode": true
       }
     ]
   },

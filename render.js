@@ -30,12 +30,82 @@ const functionRegistry = {
     return this.paramsList;
   },
   maxTime: 6 * 60 * 1000,
-  get time() {
-    return Math.floor(
-      (this.maxTime - (new Date().getTime() % (1000 * 60))) / 1000,
-    );
+  _startTime: null,       // Private variable to store the timestamp when the process begins
+
+  /**
+   * Starts the global timer for your process.
+   * This should be called only ONCE at the beginning of your main execution.
+   */
+  startProcessTimer: function() {
+    if (this._startTime === null) {
+      this._startTime = new Date().getTime();
+      console.log("Process timer started at:", new Date(this._startTime).toISOString());
+    } else {
+      console.warn("Process timer has already started. Call resetProcessTimer() if you want to restart.");
+    }
   },
+
+  /**
+   * Resets the global timer. Call this if you want to start a completely new execution cycle.
+   */
+  resetProcessTimer: function() {
+    this._startTime = null;
+    console.log("Process timer reset.");
+  },
+
+  /**
+   * Get the elapsed time since the process started.
+   * Returns 0 if the timer hasn't been started.
+   * @returns {number} Elapsed time in milliseconds.
+   */
+  get time() {
+    if (this._startTime === null) {
+      return 0;
+    }
+    return new Date().getTime() - this._startTime;
+  },
+
+  /**
+   * Get the time remaining until the 'maxTime' timeout is reached.
+   * Returns 'maxTime' if the timer hasn't been started.
+   * Ensures the returned value is not negative.
+   * @returns {number} Time left to execute in milliseconds.
+   */
+  get timeLeftToExecute() {
+    if (this._startTime === null) {
+      return this.maxTime; // Full time remaining if not started
+    }
+    const elapsed = this.time;
+    const remaining = this.maxTime - elapsed;
+    return Math.max(0, remaining); // Ensure remaining time doesn't go below zero
+  },
+
+  /**
+   * Helper to get elapsed time in seconds for easier readability.
+   * @returns {number} Elapsed time in seconds.
+   */
+  get elapsedTimeInSeconds() {
+    return Math.floor(this.time / 1000);
+  },
+
+  /**
+   * Helper to get time left in seconds for easier readability.
+   * @returns {number} Time left in seconds.
+   */
+  get timeLeftInSeconds() {
+    return Math.floor(this.timeLeftToExecute / 1000);
+  },
+
+  // get time() {
+  //   return Math.floor(
+  //     (this.maxTime - (new Date().getTime() % (1000 * 60))) / 1000,
+  //   );
+  // },
 };
+
+// Set some global variables
+functionRegistry.initialize();
+functionRegistry.startProcessTimer();
 
 var renderFile = function (file, argsObject) {
   if (file) {
@@ -184,7 +254,114 @@ var renderTemplate = function (blob, argsObject) {
                 text-align: center;
                 user-select: none;}
     .menu-item:hover>.menu-img {transform: scale(1.03);}
-    img {width: 160px;}</style></head>
+    img {width: 160px;}
+  
+    /* Remove all default table styling and override inline styles */
+    table, thead, tbody, tr, th, td {
+      all: unset !important; /* This is a powerful reset, removing all inherited and default styles */
+      display: block !important; /* Treat all table elements as block-level to remove table-specific layout */
+    }
+
+    /* You might want to re-add some basic block-level display for structure */
+    table {
+      width: 100% !important; /* Example: set table width */
+      border-collapse: separate !important; /* Override default collapse if present */
+      border-spacing: 0 !important; /* Remove spacing between cells */
+    }
+
+    tr {
+      display: flex !important; /* Use flexbox for rows for more control */
+      width: 100% !important;
+    }
+
+    th, td {
+      flex: 1 !important; /* Make cells equally distribute space within the flex row */
+      padding: 0 !important; /* Remove default padding */
+      margin: 0 !important; /* Remove default margin */
+      border: none !important; /* Remove any default borders */
+      vertical-align: top !important; /* Reset vertical alignment */
+      text-align: left !important; /* Reset text alignment */
+    }
+
+    /* If you have specific classes on your table, you can target them with higher specificity if needed */
+    /* For example, to target the inner table specifically */
+    .receipt table.striped.centered.highlight.responsive-table.grey.z-depth-5 table {
+      all: unset !important;
+      display: block !important;
+    }
+
+    /* And for its cells, rows, etc. */
+    .receipt table.striped.centered.highlight.responsive-table.grey.z-depth-5 table tr,
+    .receipt table.striped.centered.highlight.responsive-table.grey.z-depth-5 table td {
+      all: unset !important;
+      display: block !important; /* Or display: flex for rows, display: block for cells */
+    }
+        #jsonInput {
+          display: none;
+          width: 100%;
+          height: 8vh; /* Or whatever height you need */
+          margin:10px auto;
+          padding: 0px;
+          box-sizing: border-box; /* Include padding in width/height */
+          border:1px solid #ccc;
+          font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'monospace'; /* Monospaced font is crucial */
+          font-size: 14px;
+          line-height: 1.5; /* Good for readability */
+          white-space:pre-wrap;
+          text-align:left;
+          background-color: #282c34; /* Dark background common for code editors */
+          color: #abb2bf; /* Light text color for contrast */
+          resize: vertical; /* Allow vertical resizing, or 'none' to disable */
+          overflow: auto; /* Enable scrolling if content exceeds height */
+
+
+          /* Focus state */
+          outline: none; /* Remove default blue outline on focus */
+          box-shadow: 0 0 0 2px rgba(97, 175, 239, 0.5); /* Custom focus highlight */
+          transition: box-shadow 0.2s ease-in-out;
+        }
+        /* Style for the new textarea */
+        #indexBeta {
+          /* Basic layout and appearance */
+          width: 100%;
+          height: 80vh; /* Or whatever height you need */
+          font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'monospace'; /* Monospaced font is crucial */
+          font-size: 14px;
+          line-height: 1.5; /* Good for readability */
+          margin:10px auto;
+          white-space:pre-wrap;
+          text-align:left;
+          padding: 0px;
+          box-sizing: border-box; /* Include padding in width/height */
+          border: 1px solid #333;
+          background-color: #282c34; /* Dark background common for code editors */
+          color: #abb2bf; /* Light text color for contrast */
+          resize: vertical; /* Allow vertical resizing, or 'none' to disable */
+          overflow: auto; /* Enable scrolling if content exceeds height */
+
+          /* Hide default textarea scrollbar (optional, but common for custom scrollbars) */
+          /* If you hide this, you'd need to implement custom scrollbars with JavaScript */
+          /* -webkit-overflow-scrolling: touch; */ /* For smooth scrolling on touch devices */
+          /* &::-webkit-scrollbar { display: none; } */
+          /* & { -ms-overflow-style: none; scrollbar-width: none; } */
+
+
+          /* Focus state */
+          outline: none; /* Remove default blue outline on focus */
+          box-shadow: 0 0 0 2px rgba(97, 175, 239, 0.5); /* Custom focus highlight */
+          transition: box-shadow 0.2s ease-in-out;
+        };
+
+        #indexBeta,#jsonInput:focus {
+            box-shadow: 0 0 0 2px rgba(97, 175, 239, 0.8); /* More prominent on focus */
+        }
+
+        /* Optional: Placeholder styling */
+        #indexBeta,#jsonInput::placeholder {
+            color: #616e7f;
+        }
+
+  </style></head>
     <body>
     <? var invArray = ["group bank semi fact bio science block chain space coin"] ?>
     <? var calcArray = ["0 1 2 3 4 5 6 7 8 9"].toString().split(" ") ?>
