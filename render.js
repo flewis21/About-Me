@@ -30,25 +30,30 @@ const functionRegistry = {
     return this.paramsList;
   },
   maxTime: 6 * 60 * 1000,
-  _startTime: null,       // Private variable to store the timestamp when the process begins
+  _startTime: null, // Private variable to store the timestamp when the process begins
 
   /**
    * Starts the global timer for your process.
    * This should be called only ONCE at the beginning of your main execution.
    */
-  startProcessTimer: function() {
+  startProcessTimer: function () {
     if (this._startTime === null) {
       this._startTime = new Date().getTime();
-      console.log("Process timer started at:", new Date(this._startTime).toISOString());
+      console.log(
+        "Process timer started at:",
+        new Date(this._startTime).toISOString(),
+      );
     } else {
-      console.warn("Process timer has already started. Call resetProcessTimer() if you want to restart.");
+      console.warn(
+        "Process timer has already started. Call resetProcessTimer() if you want to restart.",
+      );
     }
   },
 
   /**
    * Resets the global timer. Call this if you want to start a completely new execution cycle.
    */
-  resetProcessTimer: function() {
+  resetProcessTimer: function () {
     this._startTime = null;
     console.log("Process timer reset.");
   },
