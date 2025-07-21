@@ -328,13 +328,13 @@ var doGet = function (e) {
                             } 
                             else if (newHtmlContent && newHtmlContent.type === "object" && newHtmlContent.data) {
                               document.open();
-                              document.write(newHtmlContent.data.index); // Use the data property
+                              document.write(newHtmlContent.data.app); // Use the data property
                               document.close();
                               console.log("Client-side: Page re-rendered with new content from server.");
                             } 
                             else {
                               document.open();
-                              document.write(newHtmlContent);
+                              document.write(newHtmlContent.data.dataStr);
                               document.close();
                               console.log("Client-side: Page re-rendered with new content from server.");
                             }
