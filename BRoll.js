@@ -89,27 +89,20 @@ var doGet = function (e) {
       JSON.stringify(e),
   );
   var funcUno = e.parameter["func"];
-  // ? console.log(e.parameter["func"] + " funcUno  = " + typeof funcUno)
-  // : console.error(e.parameter["func"] + " funcUno  = " + typeof funcUno);
   console.log("e.parameter['args'] before funcDos:", e.parameter["args"]);
   var funcDos = e.parameter["args"];
-  // ? console.log(e.parameter["args"] + " funcDos  = " + typeof funcDos)
-  // : console.error(e.parameter["args"] + " funcDos  = " + typeof funcDos);
   console.log("e.parameter['args'] after funcDos:", e.parameter["args"]);
   console.log("funcDos:", funcDos);
   var foobarr = funcUno || "renderFile";
   var libFunc = foobarr;
-  var rndPage = [
-    `untitled proMedia epaWebsite callBack oddChances jsGame checkOnDay uiAccess popUpOpen congressLeg congressMembers jFundamentals gnuFree myGNUFreeJS`,
-  ]
-    .toString()
+  var htmlList = [`untitled proMedia epaWebsite callBack oddChances jsGame checkOnDay uiAccess popUpOpen congressLeg congressMembers jFundamentals gnuFree myGNUFreeJS`,]
+  var rndPage = 
+    htmlList.toString()
     .split(" ")[
     Math.floor(
       Math.random() *
         Math.floor(
-          [
-            `untitled proMedia epaWebsite callBack oddChances jsGame checkOnDay uiAccess popUpOpen congressLeg congressMembers jFundamentals gnuFree myGNUFreeJS`,
-          ]
+          htmlList
             .toString()
             .split(" ").length,
         ),
@@ -479,6 +472,10 @@ var doGet = function (e) {
     },
   );
 };
+  // ? console.log(e.parameter["func"] + " funcUno  = " + typeof funcUno)
+  // : console.error(e.parameter["func"] + " funcUno  = " + typeof funcUno);
+  // ? console.log(e.parameter["args"] + " funcDos  = " + typeof funcDos)
+  // : console.error(e.parameter["args"] + " funcDos  = " + typeof funcDos);
 
 function endPoint(end, return_type) {
   var pathEnd = boilerplate.seoPastTime(
@@ -578,6 +575,7 @@ var runAll = function (func, args) {
 // };
 
 function runBoilerplate(func, args) {
+  console.log("B Roll BRoll: line 578")
   var libName = "boilerplate";
   // Check if maxTime exists as a global variable
   const timeRemaining =
