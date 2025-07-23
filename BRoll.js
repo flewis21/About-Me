@@ -102,9 +102,7 @@ var doGet = function (e) {
     .split(" ");
   var rndHtmlIndex = Math.floor(Math.random() * Math.floor(htmlArray.length));
   console.log("rndHtmlIndex = " + htmlArray[rndHtmlIndex]);
-  var rndPage = 
-    htmlArray.toString()
-    .split(" ")[rndHtmlIndex];
+  var rndPage = htmlArray.toString().split(" ")[rndHtmlIndex];
   var index = htmlArray.findIndex(function (element) {
     return element === e.parameter["args"] || "untitled";
   });
@@ -478,10 +476,10 @@ var doGet = function (e) {
     },
   );
 };
-  // ? console.log(e.parameter["func"] + " funcUno  = " + typeof funcUno)
-  // : console.error(e.parameter["func"] + " funcUno  = " + typeof funcUno);
-  // ? console.log(e.parameter["args"] + " funcDos  = " + typeof funcDos)
-  // : console.error(e.parameter["args"] + " funcDos  = " + typeof funcDos);
+// ? console.log(e.parameter["func"] + " funcUno  = " + typeof funcUno)
+// : console.error(e.parameter["func"] + " funcUno  = " + typeof funcUno);
+// ? console.log(e.parameter["args"] + " funcDos  = " + typeof funcDos)
+// : console.error(e.parameter["args"] + " funcDos  = " + typeof funcDos);
 
 function endPoint(end, return_type) {
   var pathEnd = boilerplate.seoPastTime(
@@ -581,7 +579,7 @@ var runAll = function (func, args) {
 // };
 
 function runBoilerplate(func, args) {
-  console.log("B Roll BRoll: line 578")
+  console.log("B Roll BRoll: line 578");
   var libName = "boilerplate";
   // Check if maxTime exists as a global variable
   const timeRemaining =
