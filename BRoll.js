@@ -95,20 +95,26 @@ var doGet = function (e) {
   console.log("funcDos:", funcDos);
   var foobarr = funcUno || "renderFile";
   var libFunc = foobarr;
-  var htmlList = [`untitled proMedia epaWebsite callBack oddChances jsGame checkOnDay uiAccess popUpOpen congressLeg congressMembers jFundamentals gnuFree myGNUFreeJS`,]
+  var htmlArray = [
+    `untitled proMedia epaWebsite callBack oddChances jsGame checkOnDay uiAccess popUpOpen congressLeg congressMembers jFundamentals gnuFree myGNUFreeJS Section3.Challenge1 cors edgarFriendly editor ssForms styling theRoll theWorks uiAccess cGWI`,
+  ]
+    .toString()
+    .split(" ");
+  var rndHtmlIndex = Math.floor(Math.random() * Math.floor(htmlArray.length));
+  console.log("rndHtmlIndex = " + htmlArray[rndHtmlIndex]);
   var rndPage = 
-    htmlList.toString()
-    .split(" ")[
-    Math.floor(
-      Math.random() *
-        Math.floor(
-          htmlList
-            .toString()
-            .split(" ").length,
-        ),
-    )
-  ];
-  args = e.parameter["args"] || ["untitled"];
+    htmlArray.toString()
+    .split(" ")[rndHtmlIndex];
+  var index = htmlArray.findIndex(function (element) {
+    return element === e.parameter["args"] || "untitled";
+  });
+  var tres = htmlArray.findIndex(function (element) {
+    return element === funcTres;
+  });
+  console.log("index:", index + "\ntres", tres);
+  var args;
+  index !== -1 ? (args = htmlArray[index]) : (args = htmlArray[rndHtmlIndex]);
+  console.log("e {parameter: {func: " + e.parameter["func"] + "}}");
   return renderTemplate(
     `<html id="indexDoGet">
                 <head>
